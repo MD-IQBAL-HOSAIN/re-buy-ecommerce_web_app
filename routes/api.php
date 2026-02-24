@@ -20,9 +20,13 @@ use App\Http\Controllers\API\CustomerInformationController;
 use App\Http\Controllers\API\TrustFeatureApiController;
 use App\Http\Controllers\API\SellElectronicsApiController;
 use App\Http\Controllers\API\SellProductApiController;
+use App\Http\Controllers\API\SellBannerImageApiController;
 use App\Http\Controllers\API\WhatLikeToSellApiController;
 use App\Http\Controllers\API\HowItWorksApiController;
 use App\Http\Controllers\API\QuestionAnswerApiController;
+use App\Http\Controllers\API\BuySellPartActivityApiController;
+use App\Http\Controllers\API\WhatsappApiController;
+use App\Http\Controllers\API\SeoApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,7 +112,10 @@ Route::controller(SellElectronicsApiController::class)->group(function () {
 Route::controller(WhatLikeToSellApiController::class)->group(function () {
     Route::get('/what-like-to-sell', 'index');
     Route::get('/what-like-to-sell/sub-category/{id}', 'getSubCategories');
-    Route::get('/what-like-to-sell/product/{id}', 'getProductsBySubCategory');
+    //Category wise featured subcategory get by id or slug both will work
+    Route::get('/featured-sub-category/{idOrSlug}', 'getFeaturedSubCategories');
+    //subcategory wise products get by id or slug both will work
+    Route::get('/what-like-to-sell/product/subcategory/{idOrSlug}', 'getProductsBySubCategory');
 
 });
 
@@ -122,9 +129,30 @@ Route::controller(SellProductApiController::class)->group(function () {
     Route::get('/sell-products', 'index');
 });
 
+// Routes for sell banner images - Public Access
+Route::controller(SellBannerImageApiController::class)->group(function () {
+    Route::get('/sell-banner-images', 'index');
+});
+
 // Routes for sell product questions - Public Access
 Route::controller(QuestionAnswerApiController::class)->group(function () {
     Route::get('/sell-products/questions/{sellProductId}', 'questionsBySellProduct');
+});
+
+
+// Routes for buy/sell activity status API - Public Access
+Route::controller(BuySellPartActivityApiController::class)->group(function () {
+    Route::get('/buy-sell-activity-status', 'index');
+});
+
+// Routes for WhatsApp number - Public Access
+Route::controller(WhatsappApiController::class)->group(function () {
+    Route::get('/whatsapp', 'index');
+});
+
+// Routes for SEO - Public Access
+Route::controller(SeoApiController::class)->group(function () {
+    Route::get('/seo', 'index');
 });
 
 

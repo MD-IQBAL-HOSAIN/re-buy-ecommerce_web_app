@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             TrustFeatureSeeder::class,
             SellProductSeeder::class,
             QuestionSeeder::class,
+            SeoSeeder::class,
 
 
         ]);

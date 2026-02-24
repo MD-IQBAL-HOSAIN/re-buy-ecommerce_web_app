@@ -4,9 +4,14 @@ namespace App\Http\Controllers\API;
 
 use App\Models\CMS;
 use App\Models\BuyCategory;
+use App\Models\SellProduct;
+use App\Models\BuySubcategory;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\SellProductNameResource;
+use App\Http\Resources\SubcategoryResource;
 
 class WhatLikeToSellApiController extends Controller
 {
@@ -86,7 +91,7 @@ class WhatLikeToSellApiController extends Controller
                 'Subcategories retrieved successfully.',
                 200,
                 [
-                    'subcategories' => \App\Http\Resources\SubcategoryResource::collection($subCategories),
+                    'subcategories' => SubcategoryResource::collection($subCategories),
                 ]
             );
 
@@ -100,34 +105,106 @@ class WhatLikeToSellApiController extends Controller
     }
 
     /**
-     * Get Products (Name & Thumbnail) by Subcategory ID
+     * Get Featured Subcategories by Category ID or Slug
      *
-     * @param int $id
+     * @param int|string $idOrSlug
      * @return JsonResponse
      */
-    public function getProductsBySubCategory($id): JsonResponse
+    public function getFeaturedSubCategories(Request $request, $idOrSlug): JsonResponse
     {
         try {
-            $products = \App\Models\Product::query()
-                ->with(['storages','colors']) // Eager load storages and colors for the product
+            $categoryId = null;
+
+            if (is_numeric($idOrSlug)) {
+                $categoryId = (int) $idOrSlug;
+            } else {
+                $categoryId = BuyCategory::where('slug', $idOrSlug)->value('id');
+            }
+
+            if (! $categoryId) {
+                return jsonErrorResponse(
+                    'Category not found.',
+                    404
+                );
+            }
+
+            $query = BuySubcategory::query()
+                ->select([
+                    'id',
+                    'buy_category_id',
+                    'name',
+                    'slug',
+                    'image',
+                ])
+                ->where('buy_category_id', $categoryId)
+                ->where('status', 'active');
+
+            if ($request->filled('featured')) {
+                $query->where('is_featured', (int) $request->featured);
+            }
+
+            $subCategories = $query->latest()->get();
+
+            return jsonResponse(
+                true,
+                'Featured subcategories retrieved successfully.',
+                200,
+                [
+                    'subcategories' => SubcategoryResource::collection($subCategories),
+                ]
+            );
+
+        } catch (\Exception $e) {
+            return jsonErrorResponse(
+                'Failed to retrieve featured subcategories.',
+                500,
+                ['error' => $e->getMessage()]
+            );
+        }
+    }
+
+    /**
+     * Get Products (Name & Thumbnail) by Subcategory ID
+     *
+     * @param int|string $idOrSlug
+     * @return JsonResponse
+     */
+    public function getProductsBySubCategory($idOrSlug): JsonResponse
+    {
+        try {
+            $subcategoryId = null;
+
+            if (is_numeric($idOrSlug)) {
+                $subcategoryId = (int) $idOrSlug;
+            } else {
+                $subcategoryId = BuySubcategory::where('slug', $idOrSlug)->value('id');
+            }
+
+            if (! $subcategoryId) {
+                return jsonErrorResponse(
+                    'Subcategory not found.',
+                    404
+                );
+            }
+
+            $products = SellProduct::query()
                 ->select([
                     'id',
                     'buy_subcategory_id',
                     'name',
                     'slug',
-                    'thumbnail',
+                    'image',
                 ])
-                ->where('buy_subcategory_id', $id)
-                ->where('status', 'active')
+                ->where('buy_subcategory_id', $subcategoryId)
                 ->latest()
                 ->get();
 
             return jsonResponse(
                 true,
-                'Products retrieved successfully.',
+                'Sell products retrieved successfully.',
                 200,
                 [
-                    'products' => \App\Http\Resources\ProductNameResource::collection($products),
+                    'products' => SellProductNameResource::collection($products),
                 ]
             );
 

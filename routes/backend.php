@@ -1,40 +1,44 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\Web\Backend\FaqController;
-use App\Http\Controllers\Web\Backend\ColorController;
-use App\Http\Controllers\Web\Backend\OrderController;
+use App\Http\Controllers\RefurbishedElectronicController;
+use App\Http\Controllers\Web\Backend\AccessoriesController;
 use App\Http\Controllers\Web\Backend\BannerController;
+use App\Http\Controllers\Web\Backend\SellBannerImageController;
+use App\Http\Controllers\Web\Backend\BuyCategoryController;
+use App\Http\Controllers\Web\Backend\BuyCategoryHeaderController;
+use App\Http\Controllers\Web\Backend\BuySellPartActivityController;
+use App\Http\Controllers\Web\Backend\BuySubcategoryController;
+use App\Http\Controllers\Web\Backend\ColorController;
+use App\Http\Controllers\Web\Backend\ConditionController;
+use App\Http\Controllers\Web\Backend\CustomerDetailsController;
+use App\Http\Controllers\Web\Backend\DashboardController;
+use App\Http\Controllers\Web\Backend\DynamicPageController;
+use App\Http\Controllers\Web\Backend\FaqController;
+use App\Http\Controllers\Web\Backend\FeatureDeviceHeaderController;
+use App\Http\Controllers\Web\Backend\HowItWorksController;
+use App\Http\Controllers\Web\Backend\HowItWorksHeaderController;
+use App\Http\Controllers\Web\Backend\LanguageController;
+use App\Http\Controllers\Web\Backend\OrderController;
 use App\Http\Controllers\Web\Backend\ProductController;
 use App\Http\Controllers\Web\Backend\ProjectController;
-use App\Http\Controllers\Web\Backend\StorageController;
-use App\Http\Controllers\Web\Backend\LanguageController;
-use App\Http\Controllers\RefurbishedElectronicController;
-use App\Http\Controllers\Web\Backend\ConditionController;
-use App\Http\Controllers\Web\Backend\DashboardController;
-use App\Http\Controllers\Web\Backend\HowItWorksController;
-use App\Http\Controllers\Web\Backend\SystemUserController;
-use App\Http\Controllers\Web\Backend\AccessoriesController;
-use App\Http\Controllers\Web\Backend\BuyCategoryController;
-use App\Http\Controllers\Web\Backend\DynamicPageController;
-use App\Http\Controllers\Web\Backend\ReviewRatingsController;
-use App\Http\Controllers\Web\Backend\BuySubcategoryController;
-use App\Http\Controllers\Web\Backend\WhatLikeToSellController;
-use App\Http\Controllers\Web\Backend\CustomerDetailsController;
-use App\Http\Controllers\Web\Backend\SellElectronicsController;
-use App\Http\Controllers\Web\Backend\HowItWorksHeaderController;
-use App\Http\Controllers\Web\Backend\BuyCategoryHeaderController;
 use App\Http\Controllers\Web\Backend\ProtectionServiceController;
-use App\Http\Controllers\Web\Backend\FeatureDeviceHeaderController;
-use App\Http\Controllers\Web\Backend\SellElectronicsHeaderController;
 use App\Http\Controllers\Web\Backend\ProtectionServiceHeaderController;
+use App\Http\Controllers\Web\Backend\QuestionAnswerController;
+use App\Http\Controllers\Web\Backend\QuestionController;
 use App\Http\Controllers\Web\Backend\RefurbishedElectronicsHeaderController;
+use App\Http\Controllers\Web\Backend\ReviewRatingsController;
+use App\Http\Controllers\Web\Backend\SellElectronicsController;
+use App\Http\Controllers\Web\Backend\SellElectronicsHeaderController;
+use App\Http\Controllers\Web\Backend\SellProductController;
+use App\Http\Controllers\Web\Backend\StorageController;
+use App\Http\Controllers\Web\Backend\SystemUserController;
 use App\Http\Controllers\Web\Backend\TrustFeatureController;
 use App\Http\Controllers\Web\Backend\TrustFeatureHeaderController;
-use App\Http\Controllers\Web\Backend\SellProductController;
-use App\Http\Controllers\Web\Backend\QuestionController;
-use App\Http\Controllers\Web\Backend\QuestionAnswerController;
+use App\Http\Controllers\Web\Backend\WhatLikeToSellController;
+use App\Http\Controllers\Web\Backend\WhatsappController;
+use App\Http\Controllers\Web\Backend\SeoController;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['as' => 'backend.'], function () {
 
@@ -93,6 +97,32 @@ Route::controller(LanguageController::class)->group(function () {
     Route::put('/language/update/{id}', 'update')->name('language.update');
     Route::get('/language/status/{id}', 'status')->name('language.status');
     Route::delete('/language/destroy/{id}', 'destroy')->name('language.destroy');
+});
+
+//! Route for SEO
+Route::controller(SeoController::class)->group(function () {
+    Route::get('/seo', 'index')->name('seo.index');
+    Route::get('/seo/create', 'create')->name('seo.create');
+    Route::post('/seo/store', 'store')->name('seo.store');
+    Route::get('/seo/edit/{id}', 'edit')->name('seo.edit');
+    Route::put('/seo/update/{id}', 'update')->name('seo.update');
+    Route::get('/seo/show/{id}', 'show')->name('seo.show');
+    Route::get('/seo/status/{id}', 'status')->name('seo.status');
+    Route::delete('/seo/delete/{id}', 'destroy')->name('seo.destroy');
+});
+
+
+//! Route for buy and sell part activity on off
+Route::controller(BuySellPartActivityController::class)->group(function () {
+    Route::get('/buy-sell-part-activity', 'index')->name('buy-sell-part-activity.index');
+    Route::get('/buy-sell-part-activity/buy-status/{id}', 'buyStatus')->name('buy-sell-part-activity.buy-status');
+    Route::get('/buy-sell-part-activity/sell-status/{id}', 'sellStatus')->name('buy-sell-part-activity.sell-status');
+});
+
+//! Route for WhatsApp number (update only)
+Route::controller(WhatsappController::class)->group(function () {
+    Route::get('/whatsapp', 'edit')->name('whatsapp.edit');
+    Route::put('/whatsapp/update', 'update')->name('whatsapp.update');
 });
 
 
@@ -236,6 +266,17 @@ Route::controller(BannerController::class)->group(function () {
     Route::post('/banner/update', 'update')->name('banner.update');
 });
 
+//! Route for Sell Banner Images (Carousel)
+Route::controller(SellBannerImageController::class)->group(function () {
+    Route::get('/sell-banner-images', 'index')->name('sell-banner-image.index');
+    Route::get('/sell-banner-images/create', 'create')->name('sell-banner-image.create');
+    Route::post('/sell-banner-images/store', 'store')->name('sell-banner-image.store');
+    Route::get('/sell-banner-images/edit/{id}', 'edit')->name('sell-banner-image.edit');
+    Route::post('/sell-banner-images/update/{id}', 'update')->name('sell-banner-image.update');
+    Route::get('/sell-banner-images/show/{id}', 'show')->name('sell-banner-image.show');
+    Route::delete('/sell-banner-images/delete/{id}', 'destroy')->name('sell-banner-image.destroy');
+});
+
 //! Route for Feature Device Header
 Route::controller(FeatureDeviceHeaderController::class)->group(function () {
     Route::get('/feature-device-header/edit', 'edit')->name('feature-device-header.edit');
@@ -341,6 +382,7 @@ Route::controller(TrustFeatureController::class)->group(function () {
 Route::controller(SellProductController::class)->group(function () {
     Route::get('/sell-products', 'index')->name('sell-products.index');
     Route::get('/sell-products/create', 'create')->name('sell-products.create');
+    Route::get('/sell-products/get-subcategories', 'getSubcategories')->name('sell-products.get-subcategories');
     Route::post('/sell-products/store', 'store')->name('sell-products.store');
     Route::get('/sell-products/edit/{id}', 'edit')->name('sell-products.edit');
     Route::post('/sell-products/update/{id}', 'update')->name('sell-products.update');

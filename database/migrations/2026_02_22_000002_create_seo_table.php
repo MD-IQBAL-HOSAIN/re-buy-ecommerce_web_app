@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('buy_subcategories', function (Blueprint $table) {
+        Schema::create('seo', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('buy_category_id')->constrained('buy_categories')->onDelete('cascade');
-            $table->string('name');
-            $table->string('slug');
-            $table->string('image')->nullable();
-            $table->boolean('is_featured')->default(false);
+            $table->text('script')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('buy_subcategories');
+        Schema::dropIfExists('seo');
     }
 };

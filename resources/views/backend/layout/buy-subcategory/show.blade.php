@@ -48,6 +48,16 @@
                                 </td>
                             </tr>
                             <tr>
+                                <th>Featured</th>
+                                <td>
+                                    @if($data->is_featured)
+                                        <span class="badge bg-success">Yes</span>
+                                    @else
+                                        <span class="badge bg-secondary">No</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
                                 <th>Image</th>
                                 <td>
                                     @if($data->image)

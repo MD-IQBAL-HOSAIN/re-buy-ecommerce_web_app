@@ -1,6 +1,6 @@
 @extends('backend.master')
 
-@section('title', 'Dashboard | Sell Products List')
+@section('title', 'Dashboard | Sell Banner Images')
 
 @push('styles')
 @endpush
@@ -9,12 +9,12 @@
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">List of Sell Products</h1>
+            <h1 class="page-title">Sell Banner Images</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Sell Products</li>
+                <li class="breadcrumb-item active" aria-current="page">Sell Banner Images</li>
             </ol>
         </div>
     </div>
@@ -25,23 +25,15 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-end mb-2">
-                        <a href="{{ route('sell-products.create') }}" class="btn btn-primary">+ Add More</a>
+                        <a href="{{ route('sell-banner-image.create') }}" class="btn btn-primary">Add Banner Images</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered text-nowrap border-bottom w-100" id="datatable">
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Language</th>
-                                    <th>Category</th>
-                                    <th>Subcategory</th>
-                                    <th>Storage</th>
-                                    <th>Color</th>
-                                    <th>Model</th>
-                                    <th>EAN</th>
                                     <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Short Name</th>
+                                    <th>Created</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -54,7 +46,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
@@ -89,56 +80,15 @@
                     pagingType: "full_numbers",
                     dom: "<'row justify-content-between table-topbar'<'col-md-2 col-sm-4 px-0'l><'col-md-2 col-sm-4 px-0'f>>tipr",
                     ajax: {
-                        url: "{{ route('sell-products.index') }}",
+                        url: "{{ route('sell-banner-image.index') }}",
                         type: "GET",
                     },
-                    columns: [{
+                    columns: [
+                        {
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
                             orderable: false,
                             searchable: false
-                        },
-                        {
-                            data: 'language',
-                            name: 'language',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'category',
-                            name: 'category',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'subcategory',
-                            name: 'subcategory',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'storage',
-                            name: 'storage',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'color',
-                            name: 'color',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'model',
-                            name: 'model',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'ean',
-                            name: 'ean',
-                            orderable: false,
-                            searchable: true
                         },
                         {
                             data: 'image',
@@ -147,16 +97,10 @@
                             searchable: false
                         },
                         {
-                            data: 'name',
-                            name: 'name',
+                            data: 'created',
+                            name: 'created',
                             orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'short_name',
-                            name: 'short_name',
-                            orderable: true,
-                            searchable: true
+                            searchable: false
                         },
                         {
                             data: 'action',
@@ -189,7 +133,7 @@
 
         // Delete Button
         function deleteItem(id) {
-            let url = '{{ route('sell-products.destroy', ':id') }}';
+            let url = '{{ route('sell-banner-image.destroy', ':id') }}';
             let csrfToken = '{{ csrf_token() }}';
             $.ajax({
                 type: "DELETE",
@@ -199,13 +143,13 @@
                 },
                 success: function(resp) {
                     $('#datatable').DataTable().ajax.reload();
-                    if (resp['success']) {
+                    if (resp.success) {
                         toastr.success(resp.message);
                     } else {
                         toastr.error(resp.message);
                     }
                 },
-                error: function(error) {
+                error: function() {
                     toastr.error('An error occurred. Please try again.');
                 }
             });

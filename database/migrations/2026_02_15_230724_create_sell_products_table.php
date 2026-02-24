@@ -19,6 +19,10 @@ return new class extends Migration
             $table->string('short_name')->nullable();
             $table->string('slug')->nullable();
             $table->string('image')->nullable();
+            $table->string('storage')->nullable();
+            $table->string('color')->nullable();
+            $table->string('model')->nullable();
+            $table->string('ean')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });

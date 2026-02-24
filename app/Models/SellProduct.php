@@ -16,6 +16,10 @@ class SellProduct extends Model
         'slug',
         'image',
         'description',
+        'storage',
+        'color',
+        'model',
+        'ean',
     ];
 
     protected $hidden = [

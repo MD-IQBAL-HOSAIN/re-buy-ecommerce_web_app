@@ -1,52 +1,42 @@
 @extends('backend.master')
 
-@section('title', 'Dashboard | Sell Products List')
-
-@push('styles')
-@endpush
+@section('title', 'SEO List')
 
 @section('content')
     {{-- PAGE-HEADER --}}
     <div class="page-header">
         <div>
-            <h1 class="page-title">List of Sell Products</h1>
+            <h1 class="page-title">SEO Scripts</h1>
         </div>
         <div class="ms-auto pageheader-btn">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Sell Products</li>
+                <li class="breadcrumb-item active" aria-current="page">SEO</li>
             </ol>
         </div>
     </div>
     {{-- PAGE-HEADER --}}
 
+    {{-- start main content --}}
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-end mb-2">
-                        <a href="{{ route('sell-products.create') }}" class="btn btn-primary">+ Add More</a>
+                        <a href="{{ route('seo.create') }}" class="btn btn-primary">+ Add SEO SCRIPT</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered text-nowrap border-bottom w-100" id="datatable">
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Language</th>
-                                    <th>Category</th>
-                                    <th>Subcategory</th>
-                                    <th>Storage</th>
-                                    <th>Color</th>
-                                    <th>Model</th>
-                                    <th>EAN</th>
-                                    <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Short Name</th>
+                                    <th>Script</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- dynamic data --}}
+                            {{-- dynamic data --}}
                             </tbody>
                         </table>
                     </div>
@@ -54,20 +44,22 @@
             </div>
         </div>
     </div>
-
+    {{-- end main content --}}
+    </div>
+    </div>
 @endsection
 
 @push('scripts')
     <script>
         $(document).ready(function() {
+
             $.ajaxSetup({
                 headers: {
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
                 }
             });
-
             if (!$.fn.DataTable.isDataTable('#datatable')) {
-                $('#datatable').DataTable({
+                let dTable = $('#datatable').DataTable({
                     order: [],
                     lengthMenu: [
                         [10, 25, 50, 100, -1],
@@ -76,6 +68,7 @@
                     processing: true,
                     responsive: true,
                     serverSide: true,
+
                     language: {
                         processing: `<div class="text-center">
                         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
@@ -83,15 +76,17 @@
                         </div>
                         </div>`
                     },
+
                     scroller: {
                         loadingIndicator: false
                     },
                     pagingType: "full_numbers",
                     dom: "<'row justify-content-between table-topbar'<'col-md-2 col-sm-4 px-0'l><'col-md-2 col-sm-4 px-0'f>>tipr",
                     ajax: {
-                        url: "{{ route('sell-products.index') }}",
+                        url: "{{ route('seo.index') }}",
                         type: "GET",
                     },
+
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
@@ -99,64 +94,16 @@
                             searchable: false
                         },
                         {
-                            data: 'language',
-                            name: 'language',
+                            data: 'script',
+                            name: 'script',
                             orderable: false,
                             searchable: true
                         },
                         {
-                            data: 'category',
-                            name: 'category',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'subcategory',
-                            name: 'subcategory',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'storage',
-                            name: 'storage',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'color',
-                            name: 'color',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'model',
-                            name: 'model',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'ean',
-                            name: 'ean',
-                            orderable: false,
-                            searchable: true
-                        },
-                        {
-                            data: 'image',
-                            name: 'image',
+                            data: 'status',
+                            name: 'status',
                             orderable: false,
                             searchable: false
-                        },
-                        {
-                            data: 'name',
-                            name: 'name',
-                            orderable: true,
-                            searchable: true
-                        },
-                        {
-                            data: 'short_name',
-                            name: 'short_name',
-                            orderable: true,
-                            searchable: true
                         },
                         {
                             data: 'action',
@@ -169,11 +116,51 @@
             }
         });
 
+        // Status Change Confirm Alert
+        function showStatusChangeAlert(id) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'You want to update the status?',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    statusChange(id);
+                }
+            });
+        }
+
+        // Status Change
+        function statusChange(id) {
+            let url = '{{ route('seo.status', ':id') }}';
+            $.ajax({
+                type: "GET",
+                url: url.replace(':id', id),
+                success: function(resp) {
+                    $('#datatable').DataTable().ajax.reload();
+                    if (resp.success === true) {
+                        toastr.success(resp.message);
+                    } else if (resp.errors) {
+                        toastr.error(resp.errors[0]);
+                    } else {
+                        toastr.error(resp.message);
+                    }
+                },
+                error: function(error) {
+                    // location.reload();
+                }
+            });
+        }
+
         // delete Confirm
         function showDeleteConfirm(id) {
             event.preventDefault();
             Swal.fire({
-                title: 'Are you sure you want to delete ?',
+                title: 'Are you sure you want to delete this record?',
                 text: 'If you delete this, it will be gone forever.',
                 icon: 'warning',
                 showCancelButton: true,
@@ -189,7 +176,7 @@
 
         // Delete Button
         function deleteItem(id) {
-            let url = '{{ route('sell-products.destroy', ':id') }}';
+            let url = '{{ route('seo.destroy', ':id') }}';
             let csrfToken = '{{ csrf_token() }}';
             $.ajax({
                 type: "DELETE",
@@ -199,7 +186,7 @@
                 },
                 success: function(resp) {
                     $('#datatable').DataTable().ajax.reload();
-                    if (resp['success']) {
+                    if (resp.success === true) {
                         toastr.success(resp.message);
                     } else {
                         toastr.error(resp.message);

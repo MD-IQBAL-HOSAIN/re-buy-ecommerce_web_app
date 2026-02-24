@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Web\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\BuyCategory;
 use App\Models\BuySubcategory;
 use App\Models\Language;
 use App\Models\SellProduct;
@@ -19,12 +20,14 @@ class SellProductController extends Controller
     protected $sellProduct;
     protected $languages;
     protected $buySubcategories;
+    protected $buyCategories;
 
     public function __construct(SellProduct $sellProduct)
     {
         $this->sellProduct      = $sellProduct;
         $this->languages        = Language::where('status', 'active')->get();
-        $this->buySubcategories = BuySubcategory::all();
+        $this->buyCategories    = BuyCategory::where('status', 'active')->get();
+        $this->buySubcategories = BuySubcategory::where('status', 'active')->get();
     }
 
     /**
@@ -37,7 +40,7 @@ class SellProductController extends Controller
     public function index(Request $request): View | JsonResponse
     {
         if ($request->ajax()) {
-            $data = $this->sellProduct->with(['language', 'buySubcategory'])->latest()->get();
+            $data = $this->sellProduct->with(['language', 'buySubcategory.buyCategory'])->latest()->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -54,8 +57,23 @@ class SellProductController extends Controller
                 ->addColumn('language', function ($data) {
                     return $data->language?->name ?? 'N/A';
                 })
+                ->addColumn('category', function ($data) {
+                    return $data->buySubcategory?->buyCategory?->name ?? 'N/A';
+                })
                 ->addColumn('subcategory', function ($data) {
                     return $data->buySubcategory?->name ?? 'N/A';
+                })
+                ->addColumn('storage', function ($data) {
+                    return $data->storage ?? 'N/A';
+                })
+                ->addColumn('color', function ($data) {
+                    return $data->color ?? 'N/A';
+                })
+                ->addColumn('model', function ($data) {
+                    return $data->model ?? 'N/A';
+                })
+                ->addColumn('ean', function ($data) {
+                    return $data->ean ?? 'N/A';
                 })
                 ->addColumn('action', function ($data) {
                     return '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
@@ -70,7 +88,7 @@ class SellProductController extends Controller
                                 </a>
                             </div>';
                 })
-                ->rawColumns(['image', 'name', 'short_name', 'language', 'subcategory', 'action'])
+                ->rawColumns(['image', 'name', 'short_name', 'language', 'category', 'subcategory', 'storage', 'color', 'model', 'ean', 'action'])
                 ->make();
         }
         return view('backend.layout.sell-products.index');
@@ -84,8 +102,9 @@ class SellProductController extends Controller
     public function create(): View
     {
         $languages     = $this->languages;
+        $categories    = $this->buyCategories;
         $subcategories = $this->buySubcategories;
-        return view('backend.layout.sell-products.create', compact('languages', 'subcategories'));
+        return view('backend.layout.sell-products.create', compact('languages', 'categories', 'subcategories'));
     }
 
     /**
@@ -99,9 +118,14 @@ class SellProductController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'language_id'        => 'required|integer',
+                'buy_category_id'    => 'required|integer',
                 'buy_subcategory_id' => 'required|integer',
                 'name'               => 'required|string|max:255',
                 'short_name'         => 'nullable|string|max:255',
+                'storage'            => 'nullable|string|max:255',
+                'color'              => 'nullable|string|max:255',
+                'model'              => 'nullable|string|max:255',
+                'ean'                => 'nullable|numeric',
                 // 'description'        => 'nullable|string|max:5000',
                 'image'              => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
             ]);
@@ -110,11 +134,25 @@ class SellProductController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
+            $subcategoryValid = BuySubcategory::where('id', $request->buy_subcategory_id)
+                ->where('buy_category_id', $request->buy_category_id)
+                ->exists();
+
+            if (! $subcategoryValid) {
+                return redirect()->back()
+                    ->withErrors(['buy_subcategory_id' => 'Selected subcategory does not match the selected category.'])
+                    ->withInput();
+            }
+
             $data                     = $this->sellProduct->newInstance();
             $data->language_id        = $request->language_id;
             $data->buy_subcategory_id = $request->buy_subcategory_id;
             $data->name               = $request->name;
             $data->short_name         = $request->short_name;
+            $data->storage            = $request->storage;
+            $data->color              = $request->color;
+            $data->model              = $request->model;
+            $data->ean                = $request->ean;
             $data->slug               = Str::slug($request->name);
             // $data->description        = $request->description;
 
@@ -141,10 +179,28 @@ class SellProductController extends Controller
      */
     public function edit($id): View
     {
-        $data          = $this->sellProduct->findOrFail($id);
+        $data          = $this->sellProduct->with('buySubcategory')->findOrFail($id);
         $languages     = $this->languages;
+        $categories    = $this->buyCategories;
         $subcategories = $this->buySubcategories;
-        return view('backend.layout.sell-products.edit', compact('data', 'languages', 'subcategories'));
+        $selectedCategoryId = $data->buySubcategory?->buy_category_id;
+        return view('backend.layout.sell-products.edit', compact('data', 'languages', 'categories', 'subcategories', 'selectedCategoryId'));
+    }
+
+    /**
+     * Get subcategories by category ID (AJAX).
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getSubcategories(Request $request): JsonResponse
+    {
+        $categoryId    = $request->category_id;
+        $subcategories = BuySubcategory::where('buy_category_id', $categoryId)
+            ->where('status', 'active')
+            ->get(['id', 'name']);
+
+        return response()->json($subcategories);
     }
 
     /**
@@ -159,9 +215,14 @@ class SellProductController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'language_id'        => 'required|integer',
+                'buy_category_id'    => 'required|integer',
                 'buy_subcategory_id' => 'required|integer',
                 'name'               => 'required|string|max:255',
                 'short_name'         => 'nullable|string|max:255',
+                'storage'            => 'nullable|string|max:255',
+                'color'              => 'nullable|string|max:255',
+                'model'              => 'nullable|string|max:255',
+                'ean'                => 'nullable|numeric',
                 // 'description'        => 'nullable|string|max:5000',
                 'image'              => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
             ]);
@@ -170,11 +231,25 @@ class SellProductController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
+            $subcategoryValid = BuySubcategory::where('id', $request->buy_subcategory_id)
+                ->where('buy_category_id', $request->buy_category_id)
+                ->exists();
+
+            if (! $subcategoryValid) {
+                return redirect()->back()
+                    ->withErrors(['buy_subcategory_id' => 'Selected subcategory does not match the selected category.'])
+                    ->withInput();
+            }
+
             $data                     = $this->sellProduct->findOrFail($id);
             $data->language_id        = $request->language_id;
             $data->buy_subcategory_id = $request->buy_subcategory_id;
             $data->name               = $request->name;
             $data->short_name         = $request->short_name;
+            $data->storage            = $request->storage;
+            $data->color              = $request->color;
+            $data->model              = $request->model;
+            $data->ean                = $request->ean;
             $data->slug               = Str::slug($request->name);
             // $data->description        = $request->description;
 

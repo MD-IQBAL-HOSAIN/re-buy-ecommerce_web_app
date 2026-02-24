@@ -30,6 +30,10 @@
                                 <td>{{ $data->language->name ?? 'N/A' }}</td>
                             </tr>
                             <tr>
+                                <th style="width: 200px;">Category</th>
+                                <td>{{ $data->buySubcategory?->buyCategory?->name ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
                                 <th style="width: 200px;">Subcategory</th>
                                 <td>{{ $data->buySubcategory->name ?? 'N/A' }}</td>
                             </tr>
@@ -42,13 +46,29 @@
                                 <td>{{ $data->short_name ?? 'N/A' }}</td>
                             </tr>
                             <tr>
+                                <th>Storage</th>
+                                <td>{{ $data->storage ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Color</th>
+                                <td>{{ $data->color ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Model</th>
+                                <td>{{ $data->model ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>EAN</th>
+                                <td>{{ $data->ean ?? 'N/A' }}</td>
+                            </tr>
+                            <tr>
                                 <th>Slug</th>
                                 <td>{{ $data->slug ?? 'N/A' }}</td>
                             </tr>
-                            <tr>
+                           {{--  <tr>
                                 <th>Description</th>
                                 <td>{!! $data->description ?? 'N/A' !!}</td>
-                            </tr>
+                            </tr> --}}
                             <tr>
                                 <th>Image</th>
                                 <td>

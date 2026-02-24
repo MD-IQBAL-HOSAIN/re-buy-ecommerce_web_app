@@ -113,6 +113,7 @@ class BuySubcategoryController extends Controller
                 'buy_category_id' => 'required|integer|exists:buy_categories,id',
                 'name' => 'required|string|max:255',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
+                'is_featured' => 'nullable|boolean',
             ]);
 
             if ($validator->fails()) {
@@ -123,6 +124,7 @@ class BuySubcategoryController extends Controller
             $data->buy_category_id = $request->buy_category_id;
             $data->name = $request->name;
             $data->slug = Str::slug($request->name);
+            $data->is_featured = $request->has('is_featured') ? 1 : 0;
 
             if ($request->hasFile('image')) {
                 $imagePath = fileUpload_old($request->file('image'), 'buy-subcategory', time() . '_' . $request->file('image')->getClientOriginalName());
@@ -168,6 +170,7 @@ class BuySubcategoryController extends Controller
                 'buy_category_id' => 'nullable|integer|exists:buy_categories,id',
                 'name' => 'nullable|string|max:255',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
+                'is_featured' => 'nullable|boolean',
             ]);
 
             if ($validator->fails()) {
@@ -176,6 +179,7 @@ class BuySubcategoryController extends Controller
 
             $data->buy_category_id = $request->buy_category_id ?? $data->buy_category_id;
             $data->name = $request->name ?? $data->name;
+            $data->is_featured = $request->has('is_featured') ? 1 : 0;
 
             if ($request->hasFile('image')) {
                 if ($data->image !== null) {

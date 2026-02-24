@@ -12,6 +12,11 @@ class BuySubcategory extends Model
         'slug',
         'image',
         'status',
+        'is_featured',
+    ];
+    
+    protected $casts = [
+        'is_featured' => 'boolean',
     ];
 
     protected $hidden = [

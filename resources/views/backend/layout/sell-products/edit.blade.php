@@ -50,41 +50,102 @@
                             @enderror
                         </div>
 
-                        {{-- Subcategory --}}
-                        <div class="mb-3">
-                            <label for="buy_subcategory_id" class="form-label">Buy Subcategory <span class="text-danger">*</span></label>
-                            <select name="buy_subcategory_id" id="buy_subcategory_id" class="form-select">
-                                <option value="">Select Subcategory</option>
-                                @foreach ($subcategories as $subcategory)
-                                    <option value="{{ $subcategory->id }}"
-                                        {{ old('buy_subcategory_id', $data->buy_subcategory_id ?? '') == $subcategory->id ? 'selected' : '' }}>
-                                        {{ $subcategory->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('buy_subcategory_id')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                        <div class="row">
+                            {{-- Category --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="buy_category_id" class="form-label">Buy Category <span class="text-danger">*</span></label>
+                                <select name="buy_category_id" id="buy_category_id" class="form-select"
+                                    data-selected="{{ old('buy_category_id', $selectedCategoryId ?? '') }}">
+                                    <option value="">Select Category</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}"
+                                            {{ old('buy_category_id', $selectedCategoryId ?? '') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('buy_category_id')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            {{-- Subcategory --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="buy_subcategory_id" class="form-label">Buy Subcategory <span class="text-danger">*</span></label>
+                                <select name="buy_subcategory_id" id="buy_subcategory_id" class="form-select"
+                                    data-selected="{{ old('buy_subcategory_id', $data->buy_subcategory_id ?? '') }}">
+                                    <option value="">Select Subcategory</option>
+                                </select>
+                                @error('buy_subcategory_id')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
 
-                        {{-- Name --}}
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" id="name" class="form-control"
-                                value="{{ old('name', $data->name) }}" placeholder="Enter product name">
-                            @error('name')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                        <div class="row">
+                            {{-- Name --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                                <input type="text" name="name" id="name" class="form-control"
+                                    value="{{ old('name', $data->name) }}" placeholder="Enter product name">
+                                @error('name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            {{-- Short Name --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="short_name" class="form-label">Short Name</label>
+                                <input type="text" name="short_name" id="short_name" class="form-control"
+                                    value="{{ old('short_name', $data->short_name) }}" placeholder="Enter short name">
+                                @error('short_name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
 
-                        {{-- Short Name --}}
-                        <div class="mb-3">
-                            <label for="short_name" class="form-label">Short Name</label>
-                            <input type="text" name="short_name" id="short_name" class="form-control"
-                                value="{{ old('short_name', $data->short_name) }}" placeholder="Enter short name">
-                            @error('short_name')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="storage" class="form-label">Storage</label>
+                                <select name="storage" id="storage" class="form-select">
+                                    <option value="">Select Storage</option>
+                                    @php
+                                        $storageOptions = ['32 GB', '64 GB', '128 GB', '256 GB', '512 GB', '1 TB'];
+                                    @endphp
+                                    @foreach ($storageOptions as $option)
+                                        <option value="{{ $option }}" {{ old('storage', $data->storage) == $option ? 'selected' : '' }}>
+                                            {{ $option }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('storage')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="color" class="form-label">Color</label>
+                                <input type="text" name="color" id="color" class="form-control"
+                                    value="{{ old('color', $data->color) }}" placeholder="Enter color">
+                                @error('color')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="model" class="form-label">Model</label>
+                                <input type="text" name="model" id="model" class="form-control"
+                                    value="{{ old('model', $data->model) }}" placeholder="Enter model">
+                                @error('model')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ean" class="form-label">EAN</label>
+                                <input type="text" name="ean" id="ean" class="form-control"
+                                    value="{{ old('ean', $data->ean) }}" placeholder="Enter EAN">
+                                @error('ean')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
 
                         {{-- Description --}}
@@ -121,4 +182,48 @@
 
 @endsection
 @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.getElementById('buy_category_id');
+            const subcategorySelect = document.getElementById('buy_subcategory_id');
+            const selectedSubcategory = subcategorySelect.dataset.selected || '';
+
+            const renderOptions = (items, selectedId) => {
+                subcategorySelect.innerHTML = '<option value="">Select Subcategory</option>';
+                items.forEach((item) => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.name;
+                    if (String(item.id) === String(selectedId)) {
+                        option.selected = true;
+                    }
+                    subcategorySelect.appendChild(option);
+                });
+            };
+
+            const loadSubcategories = (categoryId, selectedId = '') => {
+                if (!categoryId) {
+                    renderOptions([], '');
+                    return;
+                }
+
+                fetch(`{{ route('sell-products.get-subcategories') }}?category_id=${categoryId}`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then((response) => response.json())
+                    .then((data) => renderOptions(data, selectedId))
+                    .catch(() => renderOptions([], ''));
+            };
+
+            categorySelect.addEventListener('change', function() {
+                loadSubcategories(this.value, '');
+            });
+
+            if (categorySelect.value) {
+                loadSubcategories(categorySelect.value, selectedSubcategory);
+            }
+        });
+    </script>
 @endpush

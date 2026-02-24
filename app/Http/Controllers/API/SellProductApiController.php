@@ -26,6 +26,10 @@ class SellProductApiController extends Controller
                     'short_name',
                     'slug',
                     'image',
+                    'storage',
+                    'color',
+                    'model',
+                    'ean',
                 ])
                 ->latest()
                 ->get();

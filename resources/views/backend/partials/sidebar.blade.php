@@ -106,7 +106,7 @@
                     </a>
                 </li>
 
-                  <li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('order.*') ? 'active' : '' }}"
                         href="{{ route('order.index') }}">
                         <i class="ri-shopping-bag-2-line"></i> <span>Orders</span>
@@ -133,18 +133,39 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('buy-sell-part-activity.*') ? 'active' : '' }}"
+                        href="{{ route('buy-sell-part-activity.index') }}">
+                        <i class="ri-toggle-line"></i> <span>Buy/Sell Activity</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('whatsapp.*') ? 'active' : '' }}"
+                        href="{{ route('whatsapp.edit') }}">
+                        <i class="ri-whatsapp-line"></i> <span>WhatsApp Number</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('seo.*') ? 'active' : '' }}"
+                        href="{{ route('seo.index') }}">
+                        <i class="ri-code-line"></i> <span>SEO</span>
+                    </a>
+                </li>
+
 
                 <!-- end Dashboard Menu -->
 
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">CMS Pages</span></li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ getPageStatus(['backend.page.*', 'dynamic.*', 'backend.faq.*', 'refurbished-electronics.*', 'banner.*', 'feature-device-header.*', 'review-ratings.*', 'customer-details.*', 'sell-electronics.*', 'what-like-to-sell.*', 'how-it-works.*', 'trust-feature.*'], 'collapsed active') }}"
+                    <a class="nav-link menu-link {{ getPageStatus(['backend.page.*', 'dynamic.*', 'backend.faq.*', 'refurbished-electronics.*', 'banner.*', 'sell-banner-image.*', 'feature-device-header.*', 'review-ratings.*', 'customer-details.*', 'sell-electronics.*', 'what-like-to-sell.*', 'how-it-works.*', 'trust-feature.*'], 'collapsed active') }}"
                         href="#sidebarPages" data-bs-toggle="collapse" role="button" aria-expanded="false"
                         aria-controls="sidebarPages">
                         <i class="ri-pages-line"></i> <span data-key="t-pages">CMS Pages</span>
                     </a>
-                    <div class="collapse menu-dropdown {{ getPageStatus(['backend.page.*', 'dynamic.*', 'backend.faq.*', 'refurbished-electronics.*', 'banner.*', 'feature-device-header.*', 'review-ratings.*', 'customer-details.*', 'sell-electronics.*', 'what-like-to-sell.*', 'how-it-works.*', 'trust-feature.*'], 'show') }}"
+                    <div class="collapse menu-dropdown {{ getPageStatus(['backend.page.*', 'dynamic.*', 'backend.faq.*', 'refurbished-electronics.*', 'banner.*', 'sell-banner-image.*', 'feature-device-header.*', 'review-ratings.*', 'customer-details.*', 'sell-electronics.*', 'what-like-to-sell.*', 'how-it-works.*', 'trust-feature.*'], 'show') }}"
                         id="sidebarPages">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
@@ -163,6 +184,12 @@
                                 <a href="{{ route('banner.edit') }}"
                                     class="nav-link {{ getPageStatus('banner.*') }}" data-key="t-starter">
                                     Banner Images
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('sell-banner-image.index') }}"
+                                    class="nav-link {{ getPageStatus('sell-banner-image.*') }}" data-key="t-starter">
+                                    Sell Category Banner Images
                                 </a>
                             </li>
                             <li class="nav-item">
